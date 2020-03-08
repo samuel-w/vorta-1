@@ -1,0 +1,5 @@
+vorta (0.6.23-1) UNRELEASED; urgency=medium
+
+  * Initial release (Closes: #922961).
+
+ -- Nicholas D Steeves <nsteeves@gmail.com>  Sun, 16 Feb 2020 20:15:16 -0700

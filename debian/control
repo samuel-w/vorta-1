@@ -1,0 +1,50 @@
+Source: vorta
+Section: utils
+Priority: optional
+Maintainer: Nicholas D Steeves <nsteeves@gmail.com>
+Build-Depends: debhelper-compat (= 12),
+               dh-python,
+               dh-sequence-python3,
+               python3-all,
+               python3-setuptools,
+               python3-setuptools-git,
+               python3-pytest-forked <!nocheck>,
+               python3-pytest-runner <!nocheck>,
+               python3-appdirs       <!nocheck>,
+               python3-apscheduler   <!nocheck>,
+               python3-keyring       <!nocheck>,
+               python3-dateutil      <!nocheck>,
+               python3-paramiko      <!nocheck>,
+               python3-peewee        <!nocheck>,
+               python3-psutil        <!nocheck>,
+               python3-pyqt5.qsci    <!nocheck>,
+               python3-qdarkstyle    <!nocheck>
+Rules-Requires-Root: no
+Standards-Version: 4.5.0
+Homepage: https://vorta.borgbase.com
+Vcs-Browser: https://salsa.debian.org/salsa/vorta
+Vcs-Git: https://salsa.debian.org/salsa/vorta.git
+#Testsuite: autopkgtest-pkg-python
+
+Package: vorta
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends},
+         python3-pyqt5.qsci,
+         python3-secretstorage
+Suggests: python-vorta-doc
+Description: Desktop Client for Borg Backup
+ Vorta is a GUI backup client for macOS and Linux desktops. It enables less
+ technical users, or users who prefer GUIs, to benefit from the mighty
+ BorgBackup.  Now anyone can easily and conveniently protect their data from
+ disk failure, ransomware, theft, and user error.
+ .
+ Features:
+   * Encrypted, deduplicated, and compressed backups via Borg.
+   * Backup to disk (DAS: direct-attached storage), server (NAS: network
+     attached storage), or a hosting service that supports Borg (BorgBase,
+     rsync.net, et al).
+   * Profiles for grouping source folders, backup destinations, and schedules.
+   * Unified interface for viewing and managing all archives.
+   * Enhanced ease of use when restoring individual files.
+   * Built-in backup scheduling support that does not depend on system-level
+     facilities such as cron or systemd timers.

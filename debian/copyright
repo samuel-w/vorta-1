@@ -1,18 +1,18 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: vorta
 Source: https://github.com/borgbase/vorta
-Upstream-Contact: Manu <manu@snapdragon.cc>
+Upstream-Contact: Manuel Riel <manu@snapdragon.cc>
 
 Files: *
-Copyright: 2020 Manuel Riel
-                Thomas Waldmann
-                Julian Hofer
+Copyright: 2018-2020  Manuel Riel
+           2018-2019  Thomas Waldmann
+           2019  Julian Hofer
 License: GPL-3+
 
 Files: src/vorta/assets/metadata/com.borgbase.Vorta.appdata.xml
-Copyright:
+Copyright: 2019  Julian Hofer
 License: CC0-1.0
-Comment: See /usr/share/common-licenses/CC0-1.0 for full text.
+Note: See /usr/share/common-licenses/CC0-1.0 for full text.
 
 Files: debian/*
 Copyright: 2020  Nicholas D Steeves <nsteeves@gmail.com>

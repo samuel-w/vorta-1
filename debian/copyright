@@ -4,8 +4,15 @@ Source: https://github.com/borgbase/vorta
 Upstream-Contact: Manu <manu@snapdragon.cc>
 
 Files: *
-Copyright: 2020 INVALID
+Copyright: 2020 Manuel Riel
+                Thomas Waldmann
+                Julian Hofer
 License: GPL-3+
+
+Files: src/vorta/assets/metadata/com.borgbase.Vorta.appdata.xml
+Copyright:
+License: CC0-1.0
+Comment: See /usr/share/common-licenses/CC0-1.0 for full text.
 
 Files: debian/*
 Copyright: 2020  Nicholas D Steeves <nsteeves@gmail.com>

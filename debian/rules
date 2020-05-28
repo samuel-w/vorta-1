@@ -3,8 +3,3 @@ export PYBUILD_NAME=vorta
 
 %:
 	dh $@ --buildsystem=pybuild
-
-override_dh_auto_install:
-	dh_auto_install
-	chmod -x debian/vorta/usr/lib/python3*/dist-packages/vorta/assets/icons/dark/plus.svg \
-	         debian/vorta/usr/lib/python3*/dist-packages/vorta/assets/icons/light/plus.svg

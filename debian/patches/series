@@ -1,1 +1,4 @@
 001-disable-unused-pip.patch
+0002-Start-removing-qtdarkstyle-and-custom-fusion-style.patch
+0003-Adjust-SVG-icon-colors-on-the-fly-adjust-to-dark-the.patch
+0004-Linting.patch

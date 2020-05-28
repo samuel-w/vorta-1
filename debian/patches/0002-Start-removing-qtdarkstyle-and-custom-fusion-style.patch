@@ -1,0 +1,105 @@
+Subject: Start removing qtdarkstyle and custom fusion style.
+Origin: https://github.com/borgbase/vorta/pull/475
+From: Manu <manu@snapdragon.cc>
+Date: Thu, 28 May 2020 12:57:32 +0800
+
+---
+ setup.cfg                          |  1 -
+ src/vorta/application.py           |  5 -----
+ src/vorta/models.py                |  7 -------
+ src/vorta/qt_single_application.py |  3 ---
+ src/vorta/views/main_window.py     | 14 --------------
+ 5 files changed, 30 deletions(-)
+
+diff --git a/setup.cfg b/setup.cfg
+index 9690c71..d7c0e58 100644
+--- a/setup.cfg
++++ b/setup.cfg
+@@ -37,7 +37,6 @@ install_requires =
+   python-dateutil
+   apscheduler
+   psutil
+-  qdarkstyle
+   setuptools
+   secretstorage; sys_platform != 'darwin'
+   pyobjc-core; sys_platform == 'darwin'
+diff --git a/src/vorta/application.py b/src/vorta/application.py
+index 1f4d2c7..8d562a8 100644
+--- a/src/vorta/application.py
++++ b/src/vorta/application.py
+@@ -1,7 +1,6 @@
+ import os
+ import sys
+ 
+-import qdarkstyle
+ from PyQt5 import QtCore
+ 
+ import sip
+@@ -49,10 +48,6 @@ class VortaApp(QtSingleApplication):
+         # Prepare system tray icon
+         self.tray = TrayMenu(self)
+ 
+-        # Apply dark stylesheet
+-        if SettingsModel.get(key='use_dark_theme').value:
+-            self.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+-
+         args = parse_args()
+         if getattr(args, 'daemonize', False):
+             pass
+diff --git a/src/vorta/models.py b/src/vorta/models.py
+index 7fcabbc..2f1d104 100644
+--- a/src/vorta/models.py
++++ b/src/vorta/models.py
+@@ -197,13 +197,6 @@ def get_misc_settings():
+             'label': trans_late('settings',
+                                 'Use light system tray icon (applies after restart)')
+         },
+-        {
+-            'key': 'use_dark_theme',
+-            'value': False,
+-            'type': 'checkbox',
+-            'label': trans_late('settings',
+-                                'Use dark theme (applies after restart)')
+-        },
+         {
+             'key': 'enable_notifications', 'value': True, 'type': 'checkbox',
+             'label': trans_late('settings',
+diff --git a/src/vorta/qt_single_application.py b/src/vorta/qt_single_application.py
+index e231664..c251144 100644
+--- a/src/vorta/qt_single_application.py
++++ b/src/vorta/qt_single_application.py
+@@ -18,9 +18,6 @@ class QtSingleApplication(QApplication):
+         super().__init__(*argv)
+         self._id = id
+ 
+-        if sys.platform.startswith('linux'):
+-            self.setStyle('Fusion')
+-
+         # Is there another instance running?
+         self._outSocket = QLocalSocket()
+         self._outSocket.connectToServer(self._id)
+diff --git a/src/vorta/views/main_window.py b/src/vorta/views/main_window.py
+index 47014e5..90caafe 100644
+--- a/src/vorta/views/main_window.py
++++ b/src/vorta/views/main_window.py
+@@ -31,20 +31,6 @@ class MainWindow(MainWindowBase, MainWindowUI):
+         self.current_profile = BackupProfileModel.select().order_by('id').first()
+         self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
+ 
+-        # Temporary fix for QT Darkstyle dropdown issue.
+-        # See https://github.com/ColinDuquesnoy/QDarkStyleSheet/issues/200
+-        if SettingsModel.get(key='use_dark_theme').value:
+-            self.setStyleSheet("""
+-            QComboBox::item:checked {
+-            height: 12px;
+-            border: 1px solid #32414B;
+-            margin-top: 0px;
+-            margin-bottom: 0px;
+-            padding: 4px;
+-            padding-left: 0px;
+-            }
+-            """)
+-
+         # Load tab models
+         self.repoTab = RepoTab(self.repoTabSlot)
+         self.sourceTab = SourceTab(self.sourceTabSlot)

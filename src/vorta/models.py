@@ -13,9 +13,9 @@ import peewee as pw
 from playhouse.migrate import SqliteMigrator, migrate
 
 from vorta.i18n import trans_late
-from vorta.utils import is_system_tray_available, slugify, uses_dark_mode
+from vorta.utils import is_system_tray_available, slugify
 
-SCHEMA_VERSION = 13
+SCHEMA_VERSION = 14
 
 db = pw.Proxy()
 
@@ -165,7 +165,8 @@ class SchemaVersion(pw.Model):
 class SettingsModel(pw.Model):
     """App settings unrelated to a single profile or repo"""
     key = pw.CharField(unique=True)
-    value = pw.BooleanField()
+    value = pw.BooleanField(default=False)
+    str_value = pw.CharField(default='')
     label = pw.CharField()
     type = pw.CharField()
 
@@ -191,20 +192,6 @@ def get_misc_settings():
     # Default settings for all platforms.
     settings = [
         {
-            'key': 'use_light_icon',
-            'value': False,
-            'type': 'checkbox',
-            'label': trans_late('settings',
-                                'Use light system tray icon (applies after restart)')
-        },
-        {
-            'key': 'use_dark_theme',
-            'value': False,
-            'type': 'checkbox',
-            'label': trans_late('settings',
-                                'Use dark theme (applies after restart)')
-        },
-        {
             'key': 'enable_notifications', 'value': True, 'type': 'checkbox',
             'label': trans_late('settings',
                                 'Display notifications when background tasks fail')
@@ -223,6 +210,10 @@ def get_misc_settings():
             'key': 'foreground', 'value': True, 'type': 'checkbox',
             'label': trans_late('settings',
                                 'Open main window on startup')
+        },
+        {
+            'key': 'previous_profile_id', 'str_value': '1', 'type': 'internal',
+            'label': 'Previously selected profile'
         },
     ]
     if sys.platform == 'darwin':
@@ -252,20 +243,6 @@ def init_db(con=None):
     if BackupProfileModel.select().count() == 0:
         default_profile = BackupProfileModel(name='Default')
         default_profile.save()
-
-    # Create missing settings and update labels. Leave setting values untouched.
-    for setting in get_misc_settings():
-        s, created = SettingsModel.get_or_create(key=setting['key'], defaults=setting)
-        if created and setting['key'] == "use_dark_theme":
-            # Check if macOS with enabled dark mode
-            s.value = bool(uses_dark_mode())
-        if created and setting['key'] == "use_light_icon":
-            # Check if macOS with enabled dark mode or Linux with GNOME DE
-            s.value = bool(uses_dark_mode()) or 'GNOME' in os.environ.get('XDG_CURRENT_DESKTOP', '')
-        if created and setting['key'] == "enable_notifications_success":
-            s.value = not bool(is_system_tray_available())
-        s.label = setting['label']
-        s.save()
 
     # Delete old log entries after 3 months.
     three_months_ago = datetime.now() - timedelta(days=180)
@@ -359,3 +336,21 @@ def init_db(con=None):
                     ArchiveModel.insert_many(data[i:i + size], fields=fields).execute()
 
         _apply_schema_update(current_schema, 13)
+
+    if current_schema.version < 14:
+        _apply_schema_update(
+            current_schema, 14,
+            migrator.add_column(SettingsModel._meta.table_name,
+                                'str_value', pw.CharField(default='')))
+
+    # Create missing settings and update labels. Leave setting values untouched.
+    for setting in get_misc_settings():
+        s, created = SettingsModel.get_or_create(key=setting['key'], defaults=setting)
+        if created and setting['key'] == "enable_notifications_success":
+            s.value = not bool(is_system_tray_available())
+        s.label = setting['label']
+        s.save()
+
+    # Delete old log entries after 3 months.
+    three_months_ago = datetime.now() - timedelta(days=180)
+    EventLogModel.delete().where(EventLogModel.start_time < three_months_ago)

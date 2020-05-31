@@ -6,10 +6,10 @@ from vorta.models import RepoModel, ArchiveModel, BackupProfileMixin
 from vorta.utils import pretty_bytes, get_private_keys, get_asset, borg_compat
 from .ssh_dialog import SSHAddWindow
 from .repo_add_dialog import AddRepoWindow, ExistingRepoWindow
-from .utils import get_theme_class
+from .utils import get_colored_icon
 
 uifile = get_asset('UI/repotab.ui')
-RepoUI, RepoBase = uic.loadUiType(uifile, from_imports=True, import_from=get_theme_class())
+RepoUI, RepoBase = uic.loadUiType(uifile)
 
 
 class RepoTab(RepoBase, RepoUI, BackupProfileMixin):
@@ -25,9 +25,7 @@ class RepoTab(RepoBase, RepoUI, BackupProfileMixin):
         self.repoSelector.addItem(self.tr('+ Initialize New Repository'), 'new')
         self.repoSelector.addItem(self.tr('+ Add Existing Repository'), 'existing')
         self.repoSelector.insertSeparator(3)
-        for repo in RepoModel.select():
-            self.repoSelector.addItem(repo.url, repo.id)
-
+        self.set_repos()
         self.repoSelector.currentIndexChanged.connect(self.repo_select_action)
         self.repoRemoveToolbutton.clicked.connect(self.repo_unlink_action)
 
@@ -58,6 +56,18 @@ class RepoTab(RepoBase, RepoUI, BackupProfileMixin):
 
         self.init_repo_stats()
         self.populate_from_profile()
+        self.set_icons()
+
+    def set_icons(self):
+        self.repoRemoveToolbutton.setIcon(get_colored_icon('unlink'))
+        self.sshKeyToClipboardButton.setIcon(get_colored_icon('copy'))
+
+    def set_repos(self):
+        count = self.repoSelector.count()
+        for x in range(4, count):  # Repositories are listed after 4th entry in repoSelector
+            self.repoSelector.removeItem(4)
+        for repo in RepoModel.select():
+            self.repoSelector.addItem(repo.url, repo.id)
 
     def populate_from_profile(self):
         profile = self.profile()
@@ -170,7 +180,7 @@ class RepoTab(RepoBase, RepoUI, BackupProfileMixin):
             profile.repo = new_repo.id
             profile.save()
 
-            self.repoSelector.addItem(new_repo.url, new_repo.id)
+            self.set_repos()
             self.repoSelector.setCurrentIndex(self.repoSelector.count() - 1)
             self.repo_added.emit()
             self.init_repo_stats()

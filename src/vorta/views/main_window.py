@@ -8,7 +8,7 @@ from vorta.borg.borg_thread import BorgThread
 from vorta.i18n import trans_late
 from vorta.models import BackupProfileModel, SettingsModel
 from vorta.utils import borg_compat, get_asset, is_system_tray_available
-from vorta.views.utils import get_theme_class
+from vorta.views.utils import get_colored_icon
 
 from .archive_tab import ArchiveTab
 from .misc_tab import MiscTab
@@ -18,7 +18,7 @@ from .schedule_tab import ScheduleTab
 from .source_tab import SourceTab
 
 uifile = get_asset('UI/mainwindow.ui')
-MainWindowUI, MainWindowBase = uic.loadUiType(uifile, from_imports=True, import_from=get_theme_class())
+MainWindowUI, MainWindowBase = uic.loadUiType(uifile)
 
 
 class MainWindow(MainWindowBase, MainWindowUI):
@@ -28,22 +28,13 @@ class MainWindow(MainWindowBase, MainWindowUI):
         self.setWindowTitle('Vorta for Borg Backup')
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self.app = parent
-        self.current_profile = BackupProfileModel.select().order_by('id').first()
         self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
 
-        # Temporary fix for QT Darkstyle dropdown issue.
-        # See https://github.com/ColinDuquesnoy/QDarkStyleSheet/issues/200
-        if SettingsModel.get(key='use_dark_theme').value:
-            self.setStyleSheet("""
-            QComboBox::item:checked {
-            height: 12px;
-            border: 1px solid #32414B;
-            margin-top: 0px;
-            margin-bottom: 0px;
-            padding: 4px;
-            padding-left: 0px;
-            }
-            """)
+        # Select previously used profile, if available
+        prev_profile_id = SettingsModel.get(key='previous_profile_id')
+        self.current_profile = BackupProfileModel.get_or_none(id=prev_profile_id.str_value)
+        if self.current_profile is None:
+            self.current_profile = BackupProfileModel.select().order_by('name').first()
 
         # Load tab models
         self.repoTab = RepoTab(self.repoTabSlot)
@@ -70,9 +61,10 @@ class MainWindow(MainWindowBase, MainWindowUI):
         self.app.backup_cancelled_event.connect(self.backup_cancelled_event)
 
         # Init profile list
-        for profile in BackupProfileModel.select():
+        for profile in BackupProfileModel.select().order_by(BackupProfileModel.name):
             self.profileSelector.addItem(profile.name, profile.id)
-        self.profileSelector.setCurrentIndex(0)
+        current_profile_index = self.profileSelector.findData(self.current_profile.id)
+        self.profileSelector.setCurrentIndex(current_profile_index)
         self.profileSelector.currentIndexChanged.connect(self.profile_select_action)
         self.profileRenameButton.clicked.connect(self.profile_rename_action)
         self.profileDeleteButton.clicked.connect(self.profile_delete_action)
@@ -92,8 +84,15 @@ class MainWindow(MainWindowBase, MainWindowUI):
             self.cancelButton.setEnabled(True)
             self.set_status(self.tr('Backup in progress.'), progress_max=0)
 
+        self.set_icons()
+
     def on_close_window(self):
         self.close()
+
+    def set_icons(self):
+        self.profileAddButton.setIcon(get_colored_icon('plus'))
+        self.profileRenameButton.setIcon(get_colored_icon('edit'))
+        self.profileDeleteButton.setIcon(get_colored_icon('trash'))
 
     def set_status(self, text=None, progress_max=None):
         if text:
@@ -114,6 +113,9 @@ class MainWindow(MainWindowBase, MainWindowUI):
         self.repoTab.populate_from_profile()
         self.sourceTab.populate_from_profile()
         self.scheduleTab.populate_from_profile()
+        SettingsModel.update({SettingsModel.str_value: self.current_profile.id})\
+            .where(SettingsModel.key == 'previous_profile_id')\
+            .execute()
 
     def profile_rename_action(self):
         window = EditProfileWindow(rename_existing_id=self.profileSelector.currentData())

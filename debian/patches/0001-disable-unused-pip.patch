@@ -1,7 +1,8 @@
-Subject: disable unused pip
-Forwarded: not-needed
 From: Nicholas D Steeves <nsteeves@gmail.com>
 Date: Thu, 28 May 2020 09:41:04 -0400
+Subject: disable unused pip
+
+Forwarded: not-needed
 
 Remove pip from setup.cfg because it will not be used to build this
 Debian package
@@ -10,7 +11,7 @@ Debian package
  1 file changed, 1 deletion(-)
 
 diff --git a/setup.cfg b/setup.cfg
-index cbc64f2..9690c71 100644
+index 1a079d3..b763877 100644
 --- a/setup.cfg
 +++ b/setup.cfg
 @@ -27,7 +27,6 @@ license_file = LICENSE.txt

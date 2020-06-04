@@ -12,9 +12,9 @@ Note: See upstream-provided CONTRIBUTORS.md for additional significant
 Files: src/vorta/assets/metadata/com.borgbase.Vorta.appdata.xml
 Copyright: 2019  Julian Hofer
 License: CC0-1.0
-Note: CC0-1.0 does not require its full-text license or header to be
-      distributed with a work, thus one has not been included here.
-      See /usr/share/common-licenses/CC0-1.0 for full text.
+ CC0-1.0 does not require its full-text license or header to be
+ distributed with a work, thus one has not been included here.
+ See /usr/share/common-licenses/CC0-1.0 for full text.
 
 Files: debian/*
 Copyright: 2020  Nicholas D Steeves <nsteeves@gmail.com>

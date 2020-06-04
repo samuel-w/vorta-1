@@ -1,6 +1,8 @@
 From: Nicholas D Steeves <nsteeves@gmail.com>
 Date: Wed, 3 Jun 2020 22:19:29 -0400
 Subject: Desktop file: fix syntax, enhance Categories, add a Keyword.
+Forwarded: https://github.com/borgbase/vorta/pull/488
+Applied-Upstream: https://github.com/borgbase/vorta/commit/0a1eef81fc294057d04c7120ae6fabf4096e4cb3
 
 Keywords must not duplicate words in Name nor GenericName.  It might
 be useful to add additional Keywords, but I haven't been able to find

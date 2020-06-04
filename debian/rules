@@ -6,9 +6,10 @@ export PYBUILD_NAME=vorta
 
 override_dh_python3:
 	dh_python3
-	mkdir -p debian/vorta/usr/share/applications/ tmp/debian/usr/share/pixmaps/
+	mkdir -p debian/vorta/usr/share/applications/ \
+	         debian/vorta/usr/share/pixmaps/
 	mv debian/vorta/usr/lib/python3/dist-packages/vorta/assets/metadata/com.borgbase.Vorta.desktop \
 	   debian/vorta/usr/share/applications/
 	mv debian/vorta/usr/lib/python3/dist-packages/vorta/assets/icons/scalable/com.borgbase.Vorta.svg \
-	   tmp/debian/usr/share/pixmaps/
+	   debian/vorta/usr/share/pixmaps/
 	rmdir debian/vorta/usr/lib/python3/dist-packages/vorta/assets/icons/scalable/

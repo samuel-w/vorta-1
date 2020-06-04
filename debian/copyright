@@ -6,6 +6,8 @@ Upstream-Contact: Manuel Riel <manu@snapdragon.cc>
 Files: *
 Copyright: 2018-2020  Manuel Riel and Vorta contributors
 License: GPL-3+
+Note: See upstream-provided CONTRIBUTORS.md for additional significant
+      contributors.
 
 Files: src/vorta/assets/metadata/com.borgbase.Vorta.appdata.xml
 Copyright: 2019  Julian Hofer

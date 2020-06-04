@@ -30,6 +30,7 @@ Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends},
          python3-pyqt5.qsci,
          python3-secretstorage
+Recommends: borgbackup
 Suggests: python-vorta-doc
 Description: Desktop Client for Borg Backup
  Vorta is a GUI backup client for macOS and Linux desktops. It enables less

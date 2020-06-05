@@ -1,5 +1,5 @@
-vorta (0.6.26+8.gec0f19a-1) UNRELEASED; urgency=medium
+vorta (0.6.26+8.gec0f19a-1~exp1) experimental; urgency=medium
 
   * Initial release (Closes: #922961).
 
- -- Nicholas D Steeves <nsteeves@gmail.com>  Sun, 16 Feb 2020 20:15:16 -0700
+ -- Nicholas D Steeves <nsteeves@gmail.com>  Thu, 04 Jun 2020 20:14:21 -0400

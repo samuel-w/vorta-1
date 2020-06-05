@@ -1,0 +1,14 @@
+# usr/bin/vorta is a GUI application that accepts the following arguments:
+#     -h, --help       show this help message and exit
+#     --version, -V    Show version and exit.
+#     --daemonize, -d  Fork to background and don't open window on startup.
+#
+# The upstream README.md is not a good candidate for man page
+# conversion, because it does not add sufficient information to the
+# long description.  Consequently I am not installing it to
+# /usr/share/docs.
+#
+# I agree that the absence of a man page is a bug and I will open a
+# discussion with upstream about providing one in a future release.
+
+binary-without-manpage usr/bin/vorta

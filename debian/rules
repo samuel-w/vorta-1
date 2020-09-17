@@ -11,4 +11,4 @@ override_dh_python3:
 	mv debian/vorta/usr/lib/python3/dist-packages/vorta/assets/metadata/com.borgbase.Vorta.desktop \
 	   debian/vorta/usr/share/applications/
 	cp package/icon.svg \
-	   debian/vorta/usr/share/pixmaps/com.borgbase.Vorta.svg
+	   debian/vorta/usr/share/pixmaps/

@@ -6,17 +6,18 @@ Build-Depends: debhelper-compat (= 12),
                dh-python,
                dh-sequence-python3,
                python3-all (>= 3.6),
+               python3-setuptools,
                python3-setuptools-git,
-			   python3-pytest-runner,
-               python3-setuptools,		 
-	           python3-pyqt5,
-               python3-appdirs,
-               python3-apscheduler,
-               python3-secretstorage,
-               python3-dateutil,
-               python3-paramiko,
-               python3-peewee,
-               python3-psutil,			   
+			   python3-pyqt5         <!nocheck>,
+               python3-pytest-forked <!nocheck>,
+               python3-pytest-runner <!nocheck>,
+               python3-appdirs       <!nocheck>,
+               python3-apscheduler   <!nocheck>,
+               python3-secretstorage <!nocheck>,
+               python3-dateutil      <!nocheck>,
+               python3-paramiko      <!nocheck>,
+               python3-peewee        <!nocheck>,
+               python3-psutil        <!nocheck>,
 Rules-Requires-Root: no
 Standards-Version: 4.5.0
 Homepage: https://vorta.borgbase.com
@@ -27,16 +28,8 @@ Vcs-Git: https://salsa.debian.org/debian/vorta.git
 Package: vorta
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends},
-         python3-all (>= 3.6),
-         python3-setuptools,		 
-	     python3-pyqt5,
-         python3-appdirs,
-         python3-apscheduler,
-         python3-secretstorage,
-         python3-dateutil,
-         python3-paramiko,
-         python3-peewee,
-         python3-psutil,
+         python3-pyqt5.qsci,
+         python3-secretstorage
 Recommends: borgbackup
 Suggests: python-vorta-doc
 Description: Desktop Client for Borg Backup

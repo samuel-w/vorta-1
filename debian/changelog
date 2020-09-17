@@ -1,3 +1,9 @@
+vorta (0.7.1-1) focal; urgency=medium
+
+  * New upstream release.
+
+ -- Samuel Woon <samuel.woon@protonmail.com>  Wed, 16 Sep 2020 20:36:28 -0600
+
 vorta (0.6.26+8.gec0f19a-1~exp1) experimental; urgency=medium
 
   * Initial release (Closes: #922961).

@@ -1,3 +1,9 @@
+vorta (0.7.1-2) focal; urgency=medium
+
+  * Fix dependencies
+
+ -- Samuel Woon <samuel.woon@protonmail.com>  Wed, 16 Sep 2020 21:52:48 -0600
+
 vorta (0.7.1-1) focal; urgency=medium
 
   * New upstream release.

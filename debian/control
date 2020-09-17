@@ -1,15 +1,19 @@
 Source: vorta
 Section: utils
 Priority: optional
-Maintainer: Nicholas D Steeves <nsteeves@gmail.com>
+Maintainer: Samuel Woon <samuel.woon@protonmail.com>
 Build-Depends: debhelper-compat (= 12),
                dh-python,
                dh-sequence-python3,
                python3-all (>= 3.6),
-               python3-setuptools,
-               python3-setuptools-git,
-			   python3-pyqt5         <!nocheck>,
+               qttools5-dev-tools,
+               python3-setuptools-git,             
+               python3-setuptools    <!nocheck>,
+			         python3-pyqt5         <!nocheck>,
                python3-pytest-forked <!nocheck>,
+               python3-pytest-xvfb   <!nocheck>,
+               python3-pytestqt      <!nocheck>,
+               python3-pytest-mock   <!nocheck>,
                python3-pytest-runner <!nocheck>,
                python3-appdirs       <!nocheck>,
                python3-apscheduler   <!nocheck>,
@@ -23,7 +27,8 @@ Standards-Version: 4.5.0
 Homepage: https://vorta.borgbase.com
 Vcs-Browser: https://salsa.debian.org/debian/vorta
 Vcs-Git: https://salsa.debian.org/debian/vorta.git
-#Testsuite: autopkgtest-pkg-python
+Testsuite: autopkgtest-pkg-python
+Test-Command: pytest
 
 Package: vorta
 Architecture: all

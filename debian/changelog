@@ -1,3 +1,9 @@
+vorta (0.7.1-6) focal; urgency=medium
+
+  * Fix translations
+
+ -- Samuel Woon <samuel.woon@protonmail.com>  Wed, 16 Sep 2020 23:02:32 -0600
+
 vorta (0.7.1-5) focal; urgency=medium
 
   * Fix autostart button

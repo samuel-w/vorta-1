@@ -1,5 +1,6 @@
 import psutil
 from collections import namedtuple
+import pytest
 from PyQt5 import QtCore
 from vorta.models import BackupProfileModel, ArchiveModel
 import vorta.borg
@@ -42,9 +43,9 @@ def test_repo_list(qapp, qtbot, mocker, borg_json_output):
 
     assert not tab.checkButton.isEnabled()
 
-    qtbot.waitUntil(lambda: main.createProgressText.text() == 'Refreshing archives done.', timeout=3000)
+    qtbot.waitUntil(lambda: main.progressText.text() == 'Refreshing archives done.', timeout=3000)
     assert ArchiveModel.select().count() == 6
-    assert main.createProgressText.text() == 'Refreshing archives done.'
+    assert main.progressText.text() == 'Refreshing archives done.'
     assert tab.checkButton.isEnabled()
 
 
@@ -59,7 +60,7 @@ def test_repo_prune(qapp, qtbot, mocker, borg_json_output):
 
     qtbot.mouseClick(tab.pruneButton, QtCore.Qt.LeftButton)
 
-    qtbot.waitUntil(lambda: main.createProgressText.text().startswith('Refreshing archives done.'), timeout=5000)
+    qtbot.waitUntil(lambda: main.progressText.text().startswith('Refreshing archives done.'), timeout=5000)
 
 
 def test_check(qapp, mocker, borg_json_output, qtbot):
@@ -74,7 +75,7 @@ def test_check(qapp, mocker, borg_json_output, qtbot):
 
     qtbot.mouseClick(tab.checkButton, QtCore.Qt.LeftButton)
     success_text = 'INFO: Archive consistency check complete'
-    qtbot.waitUntil(lambda: main.createProgressText.text().startswith(success_text), timeout=3000)
+    qtbot.waitUntil(lambda: main.logText.text().startswith(success_text), timeout=3000)
 
 
 def test_archive_mount(qapp, qtbot, mocker, borg_json_output, monkeypatch, choose_file_dialog):
@@ -165,3 +166,35 @@ def test_archive_diff(qapp, qtbot, mocker, borg_json_output, monkeypatch):
 
     assert tab._resultwindow.archiveNameLabel_1.text() == 'test-archive'
     tab._resultwindow.accept()
+
+
+@pytest.mark.parametrize('line, expected', [
+    ('changed link        some/changed/link',
+     (0, 'changed', 'link', 'some/changed')),
+    (' +77.8 kB  -77.8 kB some/changed/file',
+     (77800, 'modified', 'file', 'some/changed')),
+    (' +77.8 kB  -77.8 kB [-rw-rw-rw- -> -rw-r--r--] some/changed/file',
+     (77800, '[-rw-rw-rw- -> -rw-r--r--]', 'file', 'some/changed')),
+    ('[-rw-rw-rw- -> -rw-r--r--] some/changed/file',
+     (0, '[-rw-rw-rw- -> -rw-r--r--]', 'file', 'some/changed')),
+
+    ('added directory    some/changed/dir',
+     (0, 'added', 'dir', 'some/changed')),
+    ('removed directory  some/changed/dir',
+     (0, 'removed', 'dir', 'some/changed')),
+
+    # Example from https://github.com/borgbase/vorta/issues/521
+    ('[user:user -> nfsnobody:nfsnobody] home/user/arrays/test.txt',
+     (0, 'modified', 'test.txt', 'home/user/arrays')),
+
+    # Very short owner change, to check stripping whitespace from file path
+    ('[a:a -> b:b]       home/user/arrays/test.txt',
+     (0, 'modified', 'test.txt', 'home/user/arrays')),
+
+    # All file-related changes in one test
+    (' +77.8 kB  -77.8 kB [user:user -> nfsnobody:nfsnobody] [-rw-rw-rw- -> -rw-r--r--] home/user/arrays/test.txt',
+     (77800, '[-rw-rw-rw- -> -rw-r--r--]', 'test.txt', 'home/user/arrays')),
+])
+def test_archive_diff_parser(line, expected):
+    files_with_attributes, nested_file_list = vorta.views.diff_result.parse_diff_lines([line])
+    assert files_with_attributes == [expected]

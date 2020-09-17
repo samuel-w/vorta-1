@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   test:
+    timeout-minutes: 15
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -11,6 +12,12 @@ jobs:
       matrix:
         python-version: [3.6, 3.7, 3.8]
         os: [ubuntu-latest, macos-latest]
+        exclude:
+          # Only test Python 3.7 on macOS
+          - os: macos-latest
+            python-version: 3.6
+          - os: macos-latest
+            python-version: 3.8
 
     steps:
     - uses: actions/checkout@v2
@@ -21,9 +28,10 @@ jobs:
     - name: Install system dependencies (Linux)
       if: runner.os == 'Linux'
       run: |
-        sudo apt install -y \
+        sudo apt update && sudo apt install -y \
           xvfb herbstluftwm libssl-dev openssl libacl1-dev libacl1 build-essential \
-          libxkbcommon-x11-0 dbus-x11
+          libxkbcommon-x11-0 dbus-x11 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+          libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
     - name: Install system dependencies (macOS)
       if: runner.os == 'macOS'
       run: |
@@ -65,5 +73,5 @@ jobs:
         pip install -r requirements.d/dev.txt
     - name: Run Flake8
       run: flake8
-    - name: Run PyLint (info only)
-      run: pylint --rcfile=setup.cfg src --exit-zero
+    # - name: Run PyLint (info only)
+    #   run: pylint --rcfile=setup.cfg src --exit-zero

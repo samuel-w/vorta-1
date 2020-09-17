@@ -37,6 +37,12 @@
          <height>0</height>
         </size>
        </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -51,7 +57,17 @@
        <item>
         <widget class="QPushButton" name="sourceAddFile">
          <property name="text">
-          <string>Add File</string>
+          <string>Add File(s)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="paste">
+         <property name="toolTip">
+          <string>One folder or file per line</string>
+         </property>
+         <property name="text">
+          <string>Paste Folders/Files</string>
          </property>
         </widget>
        </item>

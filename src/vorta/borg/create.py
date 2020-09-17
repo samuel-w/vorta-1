@@ -4,7 +4,7 @@ from dateutil import parser
 import subprocess
 
 from vorta.i18n import trans_late
-from vorta.utils import get_current_wifi, format_archive_name, borg_compat
+from vorta.utils import format_archive_name, borg_compat, get_network_status_monitor
 from vorta.models import SourceFileModel, ArchiveModel, WifiSettingModel, RepoModel
 from .borg_thread import BorgThread
 
@@ -32,14 +32,14 @@ class BorgCreateThread(BorgThread):
                 repo.total_unique_chunks = stats['total_unique_chunks']
                 repo.save()
 
-            self.app.backup_log_event.emit(self.tr('Backup finished.'))
+            self.app.backup_progress_event.emit(self.tr('Backup finished.'))
 
-    def log_event(self, msg):
-        self.app.backup_log_event.emit(msg)
+    def progress_event(self, fmt):
+        self.app.backup_progress_event.emit(fmt)
 
     def started_event(self):
         self.app.backup_started_event.emit()
-        self.app.backup_log_event.emit(self.tr('Backup started.'))
+        self.app.backup_progress_event.emit(self.tr('Backup started.'))
 
     def finished_event(self, result):
         self.app.backup_finished_event.emit(result)
@@ -78,7 +78,8 @@ class BorgCreateThread(BorgThread):
             ret['message'] = trans_late('messages', 'Add some folders to back up first.')
             return ret
 
-        current_wifi = get_current_wifi()
+        network_status_monitor = get_network_status_monitor()
+        current_wifi = network_status_monitor.get_current_wifi()
         if current_wifi is not None:
             wifi_is_disallowed = WifiSettingModel.select().where(
                 (
@@ -92,6 +93,11 @@ class BorgCreateThread(BorgThread):
             if wifi_is_disallowed.count() > 0 and profile.repo.is_remote_repo():
                 ret['message'] = trans_late('messages', 'Current Wifi is not allowed.')
                 return ret
+
+        if profile.dont_run_on_metered_networks and network_status_monitor.is_network_metered():
+            ret['message'] = trans_late('messages', 'Not running backup over metered connection.')
+            return ret
+
         ret['profile'] = profile
         ret['repo'] = profile.repo
 
@@ -108,7 +114,18 @@ class BorgCreateThread(BorgThread):
             ret['message'] = trans_late('messages', 'Your current Borg version does not support ZStd compression.')
             return ret
 
-        cmd = ['borg', 'create', '--list', '--info', '--log-json', '--json', '--filter=AM', '-C', profile.compression]
+        cmd = [
+            'borg',
+            'create',
+            '--list',
+            '--progress',
+            '--info',
+            '--log-json',
+            '--json',
+            '--filter=AM',
+            '-C',
+            profile.compression,
+        ]
 
         # Add excludes
         # Partly inspired by borgmatic/borgmatic/borg/create.py

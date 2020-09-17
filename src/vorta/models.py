@@ -8,6 +8,7 @@ import json
 import os
 import sys
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta as rd
 
 import peewee as pw
 from playhouse.migrate import SqliteMigrator, migrate
@@ -15,7 +16,7 @@ from playhouse.migrate import SqliteMigrator, migrate
 from vorta.i18n import trans_late
 from vorta.utils import slugify
 
-SCHEMA_VERSION = 14
+SCHEMA_VERSION = 15
 
 db = pw.Proxy()
 
@@ -26,6 +27,7 @@ class JSONField(pw.TextField):
 
     From: https://gist.github.com/rosscdh/f4f26758b0228f475b132c688f15af2b
     """
+
     def db_value(self, value):
         """Convert the python value for storage in the database."""
         return value if value is None else json.dumps(value)
@@ -38,7 +40,7 @@ class JSONField(pw.TextField):
 class RepoModel(pw.Model):
     """A single remote repo with unique URL."""
     url = pw.CharField(unique=True)
-    added_at = pw.DateTimeField(default=datetime.utcnow)
+    added_at = pw.DateTimeField(default=datetime.now)
     encryption = pw.CharField(null=True)
     unique_size = pw.IntegerField(null=True)
     unique_csize = pw.IntegerField(null=True)
@@ -89,6 +91,7 @@ class BackupProfileModel(pw.Model):
     prune_prefix = pw.CharField(default="{hostname}-{profile_slug}-")
     pre_backup_cmd = pw.CharField(default='')
     post_backup_cmd = pw.CharField(default='')
+    dont_run_on_metered_networks = pw.BooleanField(default=True)
 
     def refresh(self):
         return type(self).get(self._pk_expr())
@@ -176,6 +179,7 @@ class SettingsModel(pw.Model):
 
 class BackupProfileMixin:
     """Extend to support multiple profiles later."""
+
     def profile(self):
         return BackupProfileModel.get(id=self.window().current_profile.id)
 
@@ -214,6 +218,14 @@ def get_misc_settings():
         {
             'key': 'previous_profile_id', 'str_value': '1', 'type': 'internal',
             'label': 'Previously selected profile'
+        },
+        {
+            'key': 'previous_window_width', 'str_value': '800', 'type': 'internal',
+            'label': 'Previous window width'
+        },
+        {
+            'key': 'previous_window_height', 'str_value': '600', 'type': 'internal',
+            'label': 'Previous window height'
         },
     ]
     if sys.platform == 'darwin':
@@ -343,6 +355,13 @@ def init_db(con=None):
             migrator.add_column(SettingsModel._meta.table_name,
                                 'str_value', pw.CharField(default='')))
 
+    if current_schema.version < 15:
+        _apply_schema_update(
+            current_schema, 15,
+            migrator.add_column(BackupProfileModel._meta.table_name,
+                                'dont_run_on_metered_networks', pw.BooleanField(default=True))
+        )
+
     # Create missing settings and update labels. Leave setting values untouched.
     for setting in get_misc_settings():
         s, created = SettingsModel.get_or_create(key=setting['key'], defaults=setting)
@@ -350,5 +369,5 @@ def init_db(con=None):
         s.save()
 
     # Delete old log entries after 3 months.
-    three_months_ago = datetime.now() - timedelta(days=180)
+    three_months_ago = datetime.now() - rd(months=3)
     EventLogModel.delete().where(EventLogModel.start_time < three_months_ago)

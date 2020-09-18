@@ -1,27 +1,3 @@
-vorta (0.7.1-10) focal; urgency=medium
-
-  * Fix automated tests
-
- -- Samuel Woon <samuel.woon@protonmail.com>  Thu, 17 Sep 2020 18:32:26 -0600
-
-vorta (0.7.1-9) focal; urgency=medium
-
-  * Add automated tests
-
- -- Samuel Woon <samuel.woon@protonmail.com>  Thu, 17 Sep 2020 18:02:50 -0600
-
-vorta (0.7.1-8) focal; urgency=medium
-
-  * Fix build dependency
-
- -- Samuel Woon <samuel.woon@protonmail.com>  Thu, 17 Sep 2020 01:05:32 -0600
-
-vorta (0.7.1-7) focal; urgency=medium
-
-  * Fix build dependency
-
- -- Samuel Woon <samuel.woon@protonmail.com>  Thu, 17 Sep 2020 00:57:23 -0600
-
 vorta (0.7.1-6) focal; urgency=medium
 
   * Fix translations

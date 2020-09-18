@@ -11,7 +11,6 @@ override_dh_python3:
 				debian/vorta/usr/lib/python3/dist-packages/vorta/i18n/qm/
 	make translations-to-qm
 	mv src/vorta/i18n/qm/*.qm debian/vorta/usr/lib/python3/dist-packages/vorta/i18n/qm
-	rm -r debian/vorta/usr/lib/python3/dist-packages/vorta/i18n/ts
 	cp debian/vorta/usr/lib/python3/dist-packages/vorta/assets/metadata/com.borgbase.Vorta.desktop \
 	   debian/vorta/usr/share/applications/
 	cp package/icon.svg \

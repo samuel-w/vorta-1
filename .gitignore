@@ -1,22 +1,3 @@
-.DS_Store
-.idea/
-bin/
-build/
-dist/
-docs/
-*.autosave
-__pycache__
-.pytest_cache
-.eggs
-vorta.egg-info
-.coverage
-.tox
-.python-version
-.vagrant
-*.log
-htmlcov
-*.qm
-src/vorta/i18n/ts/vorta.en.ts
-flatpak/app/
-flatpak/.flatpak-builder/
+*
 
+!debian/*

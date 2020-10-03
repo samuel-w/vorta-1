@@ -1,7 +1,0 @@
-# Install required non-Python dev packages using Homebrew on macOS:
-# Run `brew bundle` while in this folder
-
-brew 'qt'
-brew 'hub'
-brew 'xmlstarlet'
-cask 'qt-creator'

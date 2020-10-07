@@ -1,0 +1,31 @@
+Description: Reduces icon memory usage
+
+ vorta (0.7.1-13) focal; urgency=low
+ .
+   * Reduce icon memory usage
+Author: Samuel Woon <samuel.woon@protonmail.com>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: upstream, https://github.com/borgbase/vorta/commit/b1612969964e64d10ca06c59faba98493e3080e1
+Bug: https://github.com/borgbase/vorta/pull/656
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: 2020-09-18
+
+--- vorta-0.7.1.orig/src/vorta/views/utils.py
++++ vorta-0.7.1/src/vorta/views/utils.py
+@@ -10,4 +10,8 @@ def get_colored_icon(icon_name):
+     if uses_dark_mode():
+         svg_str = svg_str.replace(b'#00000', b'#ffffff')
+     svg_img = QImage.fromData(svg_str)
++
++    # Reduce image size to 1/14th
++    svg_img = svg_img.scaled(svg_img.size() / 14)
++
+     return QIcon(QPixmap(svg_img))

@@ -2,3 +2,5 @@
 
 !/debian
 !/debian/*
+!/debian/*/*
+!/debian/*/*/*

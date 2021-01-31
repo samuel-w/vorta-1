@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 export PYBUILD_NAME=vorta
+export PYBUILD_SYSTEM=distutils
 
 %:
 	dh $@ --buildsystem=pybuild

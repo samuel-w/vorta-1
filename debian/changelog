@@ -1,3 +1,15 @@
+vorta (0.7.3-0ubuntu0ppa2) focal; urgency=medium
+
+  * Fix bug with kwallet detection
+
+ -- Samuel Woon <samuel.woon@protonmail.com>  Thu, 24 Feb 2021 03:22:47 -0600
+
+vorta (0.7.3-0ubuntu0) focal; urgency=medium
+
+  * New upstream release.
+
+ -- Samuel Woon <samuel.woon@protonmail.com>  Thu, 18 Feb 2021 16:22:28 -0600
+
 vorta (0.7.2-0ubuntu1) focal; urgency=medium
 
   * New upstream release.

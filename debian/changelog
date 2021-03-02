@@ -1,3 +1,16 @@
+vorta (0.7.4-0ubuntu0ppa2) focal; urgency=medium
+
+  * Fix patch
+
+ -- Samuel Woon <samuel.woon@protonmail.com>  Sat, 27 Feb 2021 00:07:14 -0600
+
+vorta (0.7.4-0ubuntu0ppa1) focal; urgency=medium
+
+  * New upstream release
+  * Fix kwallet issue
+
+ -- Samuel Woon <samuel.woon@protonmail.com>  Fri, 26 Feb 2021 11:14:22 -0600
+
 vorta (0.7.3-0ubuntu0ppa2) focal; urgency=medium
 
   * Fix bug with kwallet detection

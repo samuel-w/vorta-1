@@ -5,9 +5,10 @@ Description: <short summary of the patch>
  information below has been extracted from the changelog. Adjust it or drop
  it.
  .
- vorta (0.7.3-0ubuntu0) focal; urgency=medium
+ vorta (0.7.4-0ubuntu0ppa1) focal; urgency=medium
  .
-   * New upstream release.
+   * New upstream release
+   * Fix kwallet issue
 Author: Samuel Woon <samuel.woon@protonmail.com>
 
 ---
@@ -15,34 +16,22 @@ The information above should follow the Patch Tagging Guidelines, please
 checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
 are templates for supplementary fields that you might want to add:
 
-Origin: upstream, https://github.com/borgbase/vorta/pull/889/files
-Bug: https://github.com/borgbase/vorta/discussions/859#discussioncomment-394548
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
 Bug-Debian: https://bugs.debian.org/<bugnumber>
 Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
-Forwarded: no
-Reviewed-By: Samuel Woon <samuel.woon@protonmail.com>
-Last-Update: 2021-02-24
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: 2021-02-27
 
---- vorta-0.7.3.orig/src/vorta/keyring/kwallet.py
-+++ vorta-0.7.3/src/vorta/keyring/kwallet.py
-@@ -20,7 +20,7 @@ class VortaKWallet5Keyring(VortaKeyring)
-             self.object_path,
-             self.interface_name,
-             QtDBus.QDBusConnection.sessionBus())
--        if not (self.iface.isValid() and self.get_result("isEnabled")):
-+        if not (self.iface.isValid() and self.get_result("isEnabled") is True):
-             raise KWalletNotAvailableException
-
-     def set_password(self, service, repo_url, password):
-@@ -49,7 +49,10 @@ class VortaKWallet5Keyring(VortaKeyring)
-         wId = QVariant(0)
-         wId.convert(4)
-         output = self.get_result("open", args=[wallet_name, wId, 'vorta-repo'])
--        self.handle = int(output)
-+        try:
-+            self.handle = int(output)
-+        except ValueError:  # For when kwallet is disabled or dbus otherwise broken
-+            return -2
-
-
+--- vorta-0.7.4.orig/src/vorta/keyring/kwallet.py
++++ vorta-0.7.4/src/vorta/keyring/kwallet.py
+@@ -52,7 +52,7 @@ class VortaKWallet5Keyring(VortaKeyring)
+         try:
+             self.handle = int(output)
+         except ValueError:  # For when kwallet is disabled or dbus otherwise broken
+-            return -2
++            self.handle =  2
+ 
+ 
  class KWalletNotAvailableException(Exception):
